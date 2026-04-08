@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reality.exe — A System That Controls the User</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background elements -->
+  <div class="noise-overlay"></div>
+  <div class="particle-container" id="particles"></div>
+
+  <!-- Custom Cursor -->
+  <div id="cursor" class="custom-cursor"></div>
+  <div id="cursor-follower" class="cursor-follower"></div>
+
+  <main id="app-container">
+    
+    <div id="vignette" class="vignette-overlay"></div>
+    <div id="ambient-quotes" class="ambient-quotes-container"></div>
+    <button id="btn-mute" title="Toggle audio" class="mute-button">🔊</button>
+    <div id="blackout-screen" class="blackout-overlay"><h2 id="blackout-text" class="glitch-text" data-text=""></h2></div>
+    <div id="scratch-fx" class="scratch-overlay"></div>
+
+    <!-- Secret Interaction HUD Overlay -->
+    <div id="secret-hud" class="secret-hud-overlay"></div>
+    <!-- INIT / START -->
+    <section id="stage-init" class="stage active">
+      <div class="content flex-center">
+        <h1 class="glitch-text" data-text="SYSTEM OFFLINE">SYSTEM OFFLINE</h1>
+        <p class="subtitle">Awaiting user connection...</p>
+        <button id="btn-connect" class="neon-button mt-2">Initialize Reality.exe</button>
+      </div>
+    </section>
+
+    <!-- STAGE 1: ENTRY -->
+    <section id="stage1" class="stage">
+      <div class="content flex-center">
+        <h2 class="typewriter-text" id="s1-text">Do you trust this website?</h2>
+        <div class="actions split-actions">
+          <button class="neon-button s1-btn" data-choice="yes">Yes</button>
+          <button class="neon-button s1-btn" data-choice="no">No</button>
+        </div>
+        <p id="s1-response" class="hidden-message">Interesting... you still clicked.</p>
+      </div>
+    </section>
+
+    <!-- STAGE 2: AUTO TRANSITION -->
+    <section id="stage2" class="stage">
+      <div class="content flex-center">
+        <h2 class="typing-container" id="s2-text"></h2>
+      </div>
+    </section>
+
+    <!-- STAGE 2.5: DO NOT MOVE -->
+    <section id="stage2_5" class="stage">
+      <div class="content flex-center">
+        <h2 class="flicker-text" id="s2_5-text">Do not move your cursor...</h2>
+        <div class="progress-bar mt-2" style="width: 300px;"><div class="fill" id="fill-still"></div></div>
+      </div>
+    </section>
+
+    <!-- STAGE 3: FAKE ANALYSIS -->
+    <section id="stage3" class="stage">
+      <div class="content flex-center fake-analysis">
+        <div class="analysis-box">
+          <p id="scan-1" class="scan-text">> Analyzing cursor movement...</p>
+          <div class="progress-bar"><div class="fill" id="fill-1"></div></div>
+          
+          <p id="scan-2" class="scan-text">> Detecting hesitation...</p>
+          <div class="progress-bar"><div class="fill" id="fill-2"></div></div>
+          
+          <p id="scan-3" class="scan-text">> Extracting user metrics...</p>
+          <div class="system-data" id="client-data">
+            <span class="data-row">OS: UNKNOWN</span>
+            <span class="data-row">RES: Calculating...</span>
+          </div>
+
+          <p id="scan-result" class="scan-text highlight-text mt-2">> Confidence level: <span id="confidence-val">0</span>%</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAGE 3.1: ECHO RIDDLE -->
+    <section id="stage_riddle_echo" class="stage">
+      <div class="content flex-center">
+        <h2>I speak without a mouth and hear without ears. What am I?</h2>
+        <input type="text" id="input-echo" class="neon-input mt-2" placeholder="Type your answer..." autocomplete="off">
+        <p id="echo-response" class="hidden-message mt-2"></p>
+      </div>
+    </section>
+
+    <!-- STAGE 3.2: KEYBOARD RIDDLE -->
+    <section id="stage_riddle_key" class="stage">
+      <div class="content flex-center">
+        <h2>What has keys but can’t open locks?</h2>
+        <div class="actions split-actions">
+          <button class="neon-button key-btn" data-answer="piano">Piano</button>
+          <button class="neon-button key-btn" data-answer="keyboard">Keyboard</button>
+          <button class="neon-button key-btn" data-answer="secret">A Secret</button>
+        </div>
+        <p id="key-response" class="hidden-message mt-2"></p>
+      </div>
+    </section>
+
+    <!-- STAGE 4: RIDDLE -->
+    <section id="stage4" class="stage">
+      <div class="content flex-center">
+        <h2>You see a door. Do you open it?</h2>
+        <div class="actions split-actions hover-shift-container">
+          <button class="neon-button s4-btn hover-shift" data-choice="open">Open</button>
+          <button class="neon-button s4-btn danger-shift" data-choice="leave">Leave</button>
+        </div>
+        <p id="s4-response" class="hidden-message">You avoided it… but you're still here.</p>
+      </div>
+    </section>
+
+    <!-- STAGE 4.5: HOLD CLICK -->
+    <section id="stage4_5" class="stage">
+      <div class="content flex-center">
+        <h2>Hold your click to proceed.</h2>
+        <button id="btn-hold" class="neon-button mt-2 pulsing-btn hold-target" style="padding: 2rem; border-radius: 50%; font-weight: bold; font-size: 1.5rem;">HOLD</button>
+      </div>
+    </section>
+
+    <!-- STAGE 4.8: MEMORY FLASH -->
+    <section id="stage_memory" class="stage">
+      <div class="content flex-center">
+        <h2 id="mem-instruction">Memorize the sequence.</h2>
+        <div id="mem-shapes" class="shapes-container mt-2"></div>
+        <div id="mem-options" class="actions split-actions" style="display:none; margin-top:2rem;">
+           <button class="neon-button mem-btn" data-shape="circle">Circle</button>
+           <button class="neon-button mem-btn" data-shape="square">Square</button>
+           <button class="neon-button mem-btn" data-shape="triangle">Triangle</button>
+        </div>
+        <p id="mem-response" class="hidden-message mt-2"></p>
+      </div>
+    </section>
+
+    <!-- STAGE 5: UI DISTORTION BEGINS -->
+    <section id="stage5" class="stage">
+      <div class="content flex-center distortion-zone">
+        <h2 class="flicker-text">Control is an illusion.</h2>
+        <p class="shifting-paragraph">Click the button below to restore order.</p>
+        <button id="btn-runner" class="neon-button runner-btn">Restore Order</button>
+      </div>
+    </section>
+
+    <!-- STAGE 5.5: REACTION TEST -->
+    <section id="stage_reaction" class="stage">
+      <div class="content flex-center" id="reaction-zone" style="width: 100vw; height: 100vh; position: absolute; top:0; left:0; display: flex; flex-direction:column; justify-content: center; align-items: center; cursor: pointer;">
+        <h2 id="reaction-text" style="pointer-events:none;">Click ANYWHERE when the screen turns BLUE.</h2>
+        <p id="reaction-response" class="hidden-message mt-2" style="pointer-events:none;"></p>
+      </div>
+    </section>
+
+    <!-- STAGE 5.8: FOLLOW THE DOT -->
+    <section id="stage_follow_dot" class="stage">
+      <div class="content flex-center" style="width: 100vw; height: 100vh; position: absolute; top:0; left:0;">
+        <h2 id="dot-instruction" style="pointer-events:none; position:relative; z-index:10;">Follow the dot with your cursor.</h2>
+        <div id="glow-dot" class="chase-dot"></div>
+      </div>
+    </section>
+
+    <!-- STAGE 6: ANTI-GRAVITY -->
+    <section id="stage6" class="stage">
+      <div class="content anti-gravity-zone">
+        <h2>Physics Simulation Override</h2>
+        
+        <div class="floating-cards">
+          <div class="float-card magnetic" data-speed="1.5">Rationality</div>
+          <div class="float-card magnetic" data-speed="0.8">Logic</div>
+          <div class="float-card magnetic" data-speed="2.2">Expectation</div>
+          <div class="float-card magnetic" data-speed="1.2">Control</div>
+        </div>
+        <p class="float-text down-text mt-2">Why are you scrolling down?</p>
+      </div>
+    </section>
+
+    <!-- STAGE 6.5: CONTROL INVERSION -->
+    <section id="stage_inversion" class="stage">
+      <div class="content flex-center inversion-zone">
+        <h2 id="inversion-text">Move the object into the target zone.</h2>
+        <div id="inversion-area" class="inversion-area mt-2">
+           <div id="inv-target" class="inversion-target">TARGET</div>
+           <div id="inv-object" class="inversion-object"></div>
+        </div>
+        <p id="inversion-response" class="hidden-message mt-2"></p>
+      </div>
+    </section>
+
+    <!-- STAGE 7: CONTROL PANEL -->
+    <section id="stage7" class="stage">
+      <div class="content flex-center panel-zone">
+        <h2>SYSTEM CONTROL PANEL</h2>
+        <div class="sliders-container">
+          <div class="slider-group">
+            <label>Stability: <span id="val-stability">100%</span></label>
+            <input type="range" id="slide-stability" min="0" max="100" value="100">
+          </div>
+          <div class="slider-group">
+            <label>Chaos: <span id="val-chaos">0%</span></label>
+            <input type="range" id="slide-chaos" min="0" max="100" value="0">
+          </div>
+          <div class="slider-group">
+            <label>Reality Level: <span id="val-reality">100%</span></label>
+            <input type="range" id="slide-reality" min="0" max="100" value="100">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAGE 7.2: CURSOR CHALLENGE -->
+    <section id="stage_circle" class="stage">
+      <div class="content flex-center">
+        <h2 id="circle-instruction">Keep your cursor inside the circle for 3 seconds.</h2>
+        <div id="target-circle" class="target-circle mt-2"></div>
+      </div>
+    </section>
+
+    <!-- STAGE 7.5: WAIT -->
+    <section id="stage7_5" class="stage">
+      <div class="content flex-center">
+        <h2 id="s7_5-text" class="fading-text">Wait...</h2>
+      </div>
+    </section>
+
+    <!-- STAGE 8: TIME LOOP -->
+    <section id="stage8" class="stage">
+      <div class="content flex-center loop-zone">
+        <h2 id="loop-title">We are reaching the core.</h2>
+        <button id="btn-loop" class="neon-button scale-on-focus">Proceed</button>
+        <p id="loop-subtitle" class="hidden-message">You’ve already been here.</p>
+      </div>
+    </section>
+
+    <!-- STAGE 9: PERSONALIZED MESSAGE -->
+    <section id="stage9" class="stage">
+      <div class="content flex-center">
+        <h2 class="typewriter-dynamic" id="s9-text"></h2>
+      </div>
+    </section>
+
+    <!-- STAGE 10: SYSTEM COLLAPSE -->
+    <section id="stage10" class="stage">
+      <div class="content flex-center collapse-zone">
+        <div id="error-dialog" class="system-error">
+          <div class="error-header">FATAL ERROR</div>
+          <div class="error-body">Reality.exe has stopped responding.</div>
+          <button id="btn-error-close" class="neon-button error-btn">Close Program</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL STAGE: REVEAL -->
+    <section id="stage-final" class="stage">
+      <div class="content flex-center calm-zone" style="height: 100vh; justify-content: center;">
+        <div id="final-sequence" style="display:flex; flex-direction:column; gap: 2rem;">
+            <div id="dead-1" class="dead-text"></div>
+            <div id="dead-2" class="dead-text"></div>
+            <div id="dead-3" class="dead-text"></div>
+            <div id="dead-4" class="dead-text" style="font-size:1rem; opacity:0; color: #ff3333;">Reality.exe has ended.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GSAP Core & Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Main Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
